@@ -504,7 +504,7 @@ $(function(){
 	function renderFileRow(data) {
 		var $imglink = $('<img />').attr('src', data.is_dir ? '#' + encodeURIComponent(data.path) : './' + data.path);
 		var $imglinkDiv = $('<div />').append($imglink);
-		var $link = $('<a class="name demo_img" />').attr('href',data.is_dir ? '#' + encodeURIComponent(data.path) : './' + data.path).text(data.name).append($imglinkDiv);
+		var $link = $('<a class="name demo_img" />').attr('href',data.is_dir ? '#' + encodeURIComponent(data.path) : './' + data.path).attr('target','_blank').text(data.name).append($imglinkDiv);
 		//var $imglinkdiv = .append( $('<div />').append($imglink) 
                 var allow_direct_link = <?php echo $allow_direct_link?'true':'false'; ?>;
         	
