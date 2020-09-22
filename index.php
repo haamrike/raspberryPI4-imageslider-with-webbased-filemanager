@@ -571,8 +571,8 @@ startTimer();
     <div style="display:inline-block;border: 1px dotted #ccc; padding: 10px;">
         <?php 
         if($_GET['do'] == 'startcounter') { 
-            $showadditionalinfocounter='(oodake 5 minutit peale restarti, enne järgmise tegevuse alustamist. <span style="font-weight:bold;">Ärge värskendage enne restardi lõppu antud lehekülge käsitsi!</span>)';
-        }else{$showadditionalinfocounter='';?>[ <a id="starttimer" class="reboot" href="?do=reboot#pildid_kuvamiseks">restardi RaspberryPI seade</a> ]<?php } ?> 
+            $showadditionalinfocounter='(oodake 5 minutit peale restarti, enne järgmise tegevuse alustamist. <span style="font-weight:bold;">Ärge klikkige antud lehekülje linkidel ega värskendage seda enne restardi lõppu!</span>)';
+        }else{$showadditionalinfocounter='<strong>Restart on soovitav teha alles siis, kui kõik failid, mida sooviti, on üleslaetud või kustutatud vastavalt vajadusele!</strong>';?>[ <a id="starttimer" class="reboot" href="?do=reboot#pildid_kuvamiseks">restardi RaspberryPI seade</a> ]<?php } ?> 
         <div class="countdown" style="margin-left: 10px;margin-right: 10px;display:inline-block;font-weight:bold;"></div>
         <div style="display:inline-block;"> 
             <div style="color:#ccc;font-size:12px;" class="showadditionalinfocounter"><?=$showadditionalinfocounter;?></div>
@@ -582,8 +582,9 @@ startTimer();
    <?php if($allow_upload): ?>
 
 	<div id="file_drop_target">
-		Drag Files Here To Upload
-		<b>or</b>
+		<!--Drag Files Here To Upload
+		<b>or</b>-->
+		Upload files: 
 		<input type="file" multiple />
 	</div>
    <?php endif; ?>
