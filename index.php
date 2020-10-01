@@ -19,11 +19,11 @@ $allow_show_folders = true; // Set to false to hide all subdirectories
 $disallowed_patterns = ['*.php'];  // must be an array.  Matching files not allowed to be uploaded
 $hidden_patterns = ['*.php','.*']; // Matching files hidden in directory index
 
-$PASSWORD = '';  // Set the password, to access the file manager... (optional)
+$PASSWORD = 'PASSWORD';  // Set the password, to access the file manager... (optional)
 
+session_start();
 if($PASSWORD) {
 
-	session_start();
 	if(!$_SESSION['_sfm_allowed']) {
 		// sha1, and random bytes to thwart timing attacks.  Not meant as secure hashing.
 		$t = bin2hex(openssl_random_pseudo_bytes(10));
@@ -43,6 +43,7 @@ function rebootRaspberryPi(){
    //exec('sudo /sbin/reboot');
    exec('sudo /sbin/shutdown -r +1 "Server will restart in 1 minutes. Please save your work."');
    header('Location: ?do=startcounter#pildid_kuvamiseks');
+   exit;
 }
 
 
@@ -138,7 +139,18 @@ if($_GET['do'] == 'list') {
 	exit;
 }
 elseif($_GET['do'] == 'reboot'){
-  rebootRaspberryPi();
+	if($_SESSION['_sfm_allowed']===true) {
+		rebootRaspberryPi();
+	}else{
+		echo '<span style="font-size:14px; color: red;">You are not allowed to restart Raspberry PI 4!</span>';
+	}
+}
+elseif($_GET['do'] == 'logout'){
+	unset($_SESSION['_sfm_allowed']);
+	session_unset();
+	session_destroy();
+	header('Location: ?#pildid_kuvamiseks');
+	exit;
 }
 function is_entry_ignored($entry, $allow_show_folders, $hidden_patterns) {
 	if ($entry === basename(__FILE__)) {
@@ -567,24 +579,34 @@ startTimer();
 	</form>
 
    <?php endif; ?>
-   
-    <div style="display:inline-block;border: 1px dotted #ccc; padding: 10px;">
-        <?php 
-        if($_GET['do'] == 'startcounter') { 
-            $showadditionalinfocounter='(oodake 5 minutit peale restarti, enne järgmise tegevuse alustamist. <span style="font-weight:bold;">Ärge klikkige antud lehekülje linkidel ega värskendage seda enne restardi lõppu!</span>)';
-        }else{$showadditionalinfocounter='<strong>Restart on soovitav teha alles siis, kui kõik failid, mida sooviti, on üleslaetud ja/või kustutatud vastavalt vajadusele!</strong>';?>[ <a id="starttimer" class="reboot" href="?do=reboot#pildid_kuvamiseks">restardi RaspberryPI seade</a> ]<?php } ?> 
-        <div class="countdown" style="margin-left: 10px;margin-right: 10px;display:inline-block;font-weight:bold;"></div>
-        <div style="display:inline-block;"> 
-            <div style="color:#ccc;font-size:12px;" class="showadditionalinfocounter"><?=$showadditionalinfocounter;?></div>
-        </div>
-    </div>
-    <br style="clear:both;" />
+   <?php if($_SESSION['_sfm_allowed']===true) { ?>
+		<div style="display:block;border: 1px dotted #ccc; padding: 10px;">
+			<?php 
+				if($_GET['do'] == 'startcounter') { 
+					$showadditionalinfocounter='(oodake 5 minutit peale restarti, enne järgmise tegevuse alustamist. <span style="font-weight:bold;">Ärge klikkige antud lehekülje linkidel ega värskendage seda enne restardi lõppu!</span>)';
+				}else{$showadditionalinfocounter='<strong>Restart on soovitav teha alles siis, kui kõik failid, mida sooviti, on üleslaetud ja/või kustutatud vastavalt vajadusele!</strong>';
+				
+					echo '<div style="display:inline-block;width:100%">';
+						echo'<p style="margin:0;padding: 2px 4px;font-size:12px;float:left;">Seadme IP: <strong>'.$_SERVER['SERVER_ADDR'].'</strong></p>';
+						echo'<p style="margin:0;padding: 2px 4px;font-size:12px;float: right"><a href="?do=logout#pildid_kuvamiseks">Logi välja</a></p>';
+					echo '</div>';
+					
+					?>
+				<div style="display:inline-block;">[ <a id="starttimer" class="reboot" href="?do=reboot#pildid_kuvamiseks">restardi RaspberryPI seade</a> ]</div>
+			<?php } ?> 
+			<div class="countdown" style="margin-left: 10px;margin-right: 10px;display:inline-block;font-weight:bold;"></div>
+			<div style="display:inline-block;"> 
+				<div style="color:#ccc;font-size:12px;" class="showadditionalinfocounter"><?=$showadditionalinfocounter;?></div>
+			</div>
+		</div>
+		<br style="clear:both;" />
+   <?php } ?>
    <?php if($allow_upload): ?>
 
 	<div id="file_drop_target">
 		<!--Drag Files Here To Upload
 		<b>or</b>-->
-		Upload files: 
+		Max. allowed file size: <?='<strong>'.ini_get('upload_max_filesize').'</strong>';?>. Upload files: 
 		<input type="file" multiple />
 	</div>
    <?php endif; ?>
