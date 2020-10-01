@@ -1,9 +1,8 @@
 ﻿<?php
 /********************************
-Simple PHP File Manager
-Copyright John Campbell (jcampbell1)
+Simple Raspberry PI4 PHP File Manager
+Copyright Ivo Ahun (ha:mrike)
 
-Liscense: MIT
 ********************************/
 
 //Disable error report for undefined superglobals
